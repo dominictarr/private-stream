@@ -1,0 +1,23 @@
+{
+  "name": "private-stream",
+  "description": "",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dominictarr/private-stream",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dominictarr/private-stream.git"
+  },
+  "dependencies": {
+    "pull-handshake": "~0.0.2",
+    "pull-crypto": "~1.0.3",
+    "pull-stream": "~2.26.0"
+  },
+  "devDependencies": {
+    "tape": "~3.0.1"
+  },
+  "scripts": {
+    "test": "set -e; for t in test/*.js; do node $t; done"
+  },
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
+  "license": "MIT"
+}
