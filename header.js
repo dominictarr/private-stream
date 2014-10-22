@@ -1,7 +1,7 @@
 
 
-module.exports = function (n, onHeader) {
-  var head = [], done = false
+module.exports = function (length, onHeader) {
+  var head = [], done = false, len = 0
   return function (read) {
     return function (abort, cb) {
       read(abort, function next (end, data) {
@@ -14,9 +14,16 @@ module.exports = function (n, onHeader) {
         //if the stream errored, just pass that along.
         if(end) return cb(end)
 
-        if(head.length < n) head.push(data)
-        if(head.length == n) {
-          done = true; onHeader(head)
+        if(len < length) {
+          head.push(data)
+          len += data.length
+        }
+        if(len >= length) {
+          var header = Buffer.concat(head)
+          data = header.slice(length, header.length)
+          header = header.slice(0, length)
+          done = true; onHeader(header)
+          if(data.length) return cb(null, data)
         }
         read(null, next)
       })
