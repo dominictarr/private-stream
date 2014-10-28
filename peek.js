@@ -12,6 +12,7 @@ module.exports = function (first) {
       if(waiting) {
         var cb = waiting
         waiting = null
+        peeked = true
         cb(end, data)
       }
     })
