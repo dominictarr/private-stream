@@ -13,7 +13,9 @@
     "pull-stream": "~2.26.0"
   },
   "devDependencies": {
-    "tape": "~3.0.1"
+    "tape": "~3.0.1",
+    "pull-randomly-split": "~1.0.1",
+    "pull-cat": "~1.1.5"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
