@@ -4,8 +4,9 @@ var crypto = require('crypto')
 var cipher = require('../cipher')
 var pull = require('pull-stream')
 var random = require('pull-randomly-split')
-
 var tape = require('tape')
+
+var readme = require('fs').readFileSync(__dirname+'/../README.md')
 
 tape('encrypt/decrypt', function (t) {
 
@@ -115,6 +116,7 @@ tape('encrypt/decrypt, delayed', function (t) {
   encrypt.secret(secret)
 
 })
+
 for(var i = 0; i < 200; i++) (function (i) {
   tape('encrypt/decrypt - ' + i, function (t) {
 
@@ -140,7 +142,32 @@ for(var i = 0; i < 200; i++) (function (i) {
       })
     )
 
+  })
+})(i)
 
+for(var i = 0; i < 20; i++) (function (i) {
+  tape('encrypt/decrypt readme file- ' + i, function (t) {
+
+    var secret = crypto.createHash('sha256').update('whatever' + i).digest()
+    var encrypt = cipher.encrypt()
+    var decrypt = cipher.decrypt()
+    decrypt.secret(secret)
+    encrypt.secret(secret)
+
+    pull(
+      pull.values([readme]),
+      random(),
+      encrypt,
+      random(),
+      decrypt,
+      random(),
+      pull.collect(function (err, ary) {
+        var b = Buffer.concat(ary)
+        t.deepEqual(b, readme)
+        t.end()
+      })
+    )
 
   })
 })(i)
+
