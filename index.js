@@ -15,8 +15,21 @@ function genDH (mod, len) {
 
 module.exports = function (dh, alg) {
 
-  dh = dh || 'modp5'
-  alg = alg || 'aes-256-cbc'
+  /*
+    Default Settings - modp14 and aes-256-cbc
+
+    reference: RFC 3526, http://www.rfc-editor.org/rfc/rfc3526.txt,
+    (sha256-42fcef9cabf127b9f1fc310489bc42401c0a4f74e8f804c3c3fac9818fe240ed)
+
+    A Diffie-Hellman group must be selected that is not weaker than
+    the AES mode. RFC mentions that there where two disagreeing estimates
+    of the relative strength of Diffie Hellman and AES,
+    private-stream's defaults follow the advice of the more conservative estimate.
+
+  */
+
+  dh = dh || 'modp15'
+  alg = alg || 'aes-128-cbc'
   return function (stream) {
     var encryptDH = genDH(dh)
     var decryptDH = genDH(dh)
