@@ -12,7 +12,8 @@
     "pull-stream": "~2.26.0",
     "pull-header": "~0.0.0",
     "pull-defer": "~0.0.0",
-    "pull-peek": "~0.0.0"
+    "pull-peek": "~0.0.0",
+    "pull-through": "~1.0.14"
   },
   "devDependencies": {
     "tape": "~3.0.1",
