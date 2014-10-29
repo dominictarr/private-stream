@@ -19,9 +19,8 @@ module.exports = function (dh, alg) {
   dh = dh || 'modp5'
   alg = alg || 'aes-256-cbc'
   return function (stream) {
-    var encryptDH = genDH(dh, length)
-    var decryptDH = genDH(dh, length)
-
+    var encryptDH = genDH(dh)
+    var decryptDH = genDH(dh)
     var l1 = encryptDH.getPublicKey().length
     var l2 = decryptDH.getPublicKey().length
 
