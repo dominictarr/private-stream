@@ -1,10 +1,9 @@
-
-
 var crypto = require('crypto')
 var cipher = require('../cipher')
 var pull = require('pull-stream')
 var random = require('pull-randomly-split')
 var tape = require('tape')
+var hexpp = require('hexpp')
 
 var readme = require('fs').readFileSync(__dirname+'/../README.md')
 
@@ -158,6 +157,9 @@ for(var i = 0; i < 20; i++) (function (i) {
       pull.values([readme]),
       random(),
       encrypt,
+      pull.through(function (data) {
+        console.log(hexpp(data, {ascii: true}))
+      }),
       random(),
       decrypt,
       random(),
