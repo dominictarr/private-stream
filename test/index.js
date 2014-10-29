@@ -90,4 +90,5 @@ tests('modp1', 'aes-128-cbc')
 tests('modp2', 'aes-192-cbc')
 tests('modp5', 'aes-256-cbc')
 tests('modp14', 'aes-256-cbc')
+tests('modp15', 'aes-128-cbc')
 
