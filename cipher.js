@@ -1,5 +1,5 @@
 var crypto = require('crypto')
-var deferred = require('./resume')
+var defer = require('pull-defer/through')
 var through = require('pull-through')
 
 function isString(s) {
@@ -23,13 +23,13 @@ exports = module.exports = function (alg, createCipher, secret) {
   }
   if(secret) return stream(secret)
 
-  var defer = deferred()
-  defer.secret = function (secret) {
-    defer.resolve(stream(secret))
-    return defer
+  var deferred = defer()
+  deferred.secret = function (secret) {
+    deferred.resolve(stream(secret))
+    return deferred
   }
 
-  return defer
+  return deferred
 }
 
 exports.encrypt = exports.encipher = exports.cipher = function (alg, secret) {

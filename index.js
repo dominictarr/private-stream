@@ -1,7 +1,7 @@
 var crypto = require('crypto')
 var pull = require('pull-stream')
 var header = require('pull-header')
-var peek = require('./peek')
+var peek = require('pull-peek')
 var cipher = require('./cipher')
 
 function genDH (mod, len) {
@@ -9,7 +9,6 @@ function genDH (mod, len) {
   do {
     dh = crypto.getDiffieHellman(mod)
     dh.generateKeys()
-    console.log(dh.getPublicKey().length)
   } while(dh.getPublicKey().length % 2)
   return dh
 }
