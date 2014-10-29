@@ -1,22 +1,34 @@
 var crypto = require('crypto')
 var pull = require('pull-stream')
-var deferredThrough = require('./resume')
-var header = require('./header')
+var header = require('pull-header')
 var peek = require('./peek')
 var cipher = require('./cipher')
+
+function genDH (mod, len) {
+  var dh
+  do {
+    dh = crypto.getDiffieHellman(mod)
+    dh.generateKeys()
+    console.log(dh.getPublicKey().length)
+  } while(dh.getPublicKey().length % 2)
+  return dh
+}
 
 module.exports = function (dh, alg) {
 
   dh = dh || 'modp5'
   alg = alg || 'aes-256-cbc'
   return function (stream) {
-    var encryptDH = crypto.getDiffieHellman(dh)
-    var decryptDH = crypto.getDiffieHellman(dh)
+    var encryptDH = genDH(dh, length)
+    var decryptDH = genDH(dh, length)
 
-    encryptDH.generateKeys()
-    decryptDH.generateKeys()
+    var l1 = encryptDH.getPublicKey().length
+    var l2 = decryptDH.getPublicKey().length
 
-    var length = encryptDH.getPublicKey().length
+    if(l1 != l2)
+      throw new Error('mismatched lengths:'+l1 +' '+l2)
+
+    var length = l1
 
     var encrypt = cipher.encrypt(alg)
     var decrypt = cipher.decrypt(alg)
@@ -36,12 +48,11 @@ module.exports = function (dh, alg) {
         decrypt,
         stream.sink
       ),
-      source:
-        pull(
-          stream.source,
-          encrypt,
-          pull.prepend(keys)
-        )
+      source: pull(
+        stream.source,
+        encrypt,
+        pull.prepend(keys)
+      )
     }
   }
 }
