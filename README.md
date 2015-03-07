@@ -84,7 +84,16 @@ participating in the network, but by forcing surveillers to participate
 in the network, at least defensive peers will have a chance to know
 they are being observed.
 
-## Mechanism
+## What this is NOT
+
+`private-stream` does not ensure the integrety of the stream.
+It does not check whether what you received is actually what
+the remote sent, but p2p protocols are generally secure even
+in plain text, and can  detect invalid data. Even if an attacker
+injected random noise into your connection, those would relibly
+produce errors at the next layer.
+
+## Protocol
 
 private-stream takes a key-exchange algorithm (diffie-helman with modp14)
 a stream cipher (salsa20 with initialization vector of first 8 bytes
