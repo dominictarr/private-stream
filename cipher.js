@@ -1,41 +1,29 @@
-var crypto = require('crypto')
 var defer = require('pull-defer/through')
-var through = require('pull-through')
+var Salsa20 = require('salsa20')
+var toPull = require('stream-to-pull-stream')
 
 function isString(s) {
   return 'string' === typeof s
 }
 
-exports = module.exports = function (alg, createCipher, secret) {
-  alg = alg || 'aes-256-cbc'
+// the iv is first 8 bytes of blake2s hash of 'private-stream'
+// new Blake2s().update('private-stream').digest().slice(0, 8)
+var iv = new Buffer('99ec6b50601492d0', 'hex')
 
-  function stream (secret) {
-    var cipher = createCipher(alg, secret)
-    return through(function (data) {
-        var _data = cipher.update(data, isString(data) ? 'utf8' : null)
-        if(_data.length) this.queue(_data)
-      }, function () {
-        var _data = cipher.final()
-        if(_data.length) this.queue(_data)
-        this.queue(null)
-      })
+function salsa20 (secret) {
+  return toPull(Salsa20(secret, iv))
+}
 
-  }
-  if(secret) return stream(secret)
+exports = module.exports = function (createStreamCipher, secret) {
+  createStreamCipher = createStreamCipher || salsa20
+
+  if(secret) return createStreamCipher(secret)
 
   var deferred = defer()
   deferred.secret = function (secret) {
-    deferred.resolve(stream(secret))
+    deferred.resolve(createStreamCipher(secret))
     return deferred
   }
 
   return deferred
-}
-
-exports.encrypt = exports.encipher = exports.cipher = function (alg, secret) {
-  return exports(alg, crypto.createCipher, secret)
-}
-
-exports.decrypt = exports.decipher = function (alg, secret) {
-  return exports(alg, crypto.createDecipher, secret)
 }
