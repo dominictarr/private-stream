@@ -15,7 +15,8 @@
     "pull-peek": "~0.0.0",
     "pull-through": "~1.0.14",
     "salsa20": "~1.0.0",
-    "stream-to-pull-stream": "~1.6.1"
+    "stream-to-pull-stream": "~1.6.1",
+    "blake2s": "~1.1.0"
   },
   "devDependencies": {
     "tape": "~3.0.1",
