@@ -1,6 +1,6 @@
 {
   "name": "private-stream",
-  "description": "",
+  "description": "simple private point-to-point connections for peer-to-peer systems",
   "version": "1.0.2",
   "homepage": "https://github.com/dominictarr/private-stream",
   "repository": {
@@ -13,7 +13,9 @@
     "pull-header": "~0.0.0",
     "pull-defer": "~0.0.0",
     "pull-peek": "~0.0.0",
-    "pull-through": "~1.0.14"
+    "pull-through": "~1.0.14",
+    "salsa20": "~1.0.0",
+    "stream-to-pull-stream": "~1.6.1"
   },
   "devDependencies": {
     "tape": "~3.0.1",
