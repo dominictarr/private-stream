@@ -1,7 +1,7 @@
 {
   "name": "private-stream",
   "description": "simple private point-to-point connections for peer-to-peer systems",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "homepage": "https://github.com/dominictarr/private-stream",
   "repository": {
     "type": "git",
