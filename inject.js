@@ -1,26 +1,28 @@
 var pull   = require('pull-stream')
 var header = require('pull-header')
 var peek   = require('pull-peek')
+var crypto = require('crypto')
 
-module.exports = function (KeyExchange, StreamCipher, Hash) {
+module.exports = function (KeyExchange, StreamCipher) {
 
   return function (stream) {
     var exchange = KeyExchange()
     var local    = exchange.getPublicKey()
 
+    var localIV  = crypto.randomBytes(8)
+
     var encrypt  = StreamCipher()
     var decrypt  = StreamCipher()
 
-    function hash (a, b) {
-      return Hash().update(a).update(b).digest()
-    }
-
     return {
       sink: pull(
-        header(local.length, function (remote) {
+        header(local.length + localIV.length, function (head) {
+          var remote = head.slice(0, local.length)
+          var remoteIV = head.slice(local.length, head.length)
+
           var secret = exchange.computeSecret(remote)
-          decrypt.secret(hash(remote, secret))
-          encrypt.secret(hash(local, secret))
+          decrypt.secret(secret, remoteIV)
+          encrypt.secret(secret, localIV)
         }),
         peek(),
         decrypt,
@@ -29,7 +31,7 @@ module.exports = function (KeyExchange, StreamCipher, Hash) {
       source: pull(
         stream.source,
         encrypt,
-        pull.prepend(local)
+        pull.prepend(Buffer.concat([local, localIV]))
       )
     }
   }
