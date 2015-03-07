@@ -17,7 +17,7 @@ to identify the type of network traffic (timing and packet sizes)
 # example
 
 ``` js
-var private = require('private-stream')() //default settings
+var private = require('private-stream')
 
 //aliceStream and bobStream must be DUPLEX pull streams
 var alice = private(aliceStream)
@@ -38,7 +38,7 @@ var createPrivateStream = require('private-stream')
 var cipherDuplexStream = createPrivateStream(plainDuplexStream)
 ```
 
-## mechanism
+## Mechanism
 
 private-stream takes a key-exchange algorithm (diffie-helman with modp14)
 and a stream cipher (salsa20 with initialization vector of first 8 bytes
@@ -52,14 +52,14 @@ key is combined with the remote decrypt key, and the local decrypt key is combin
 This means that the protocol is symmetric, and that a different key
 is used for each encryption direction.
 
-## known weaknesses
+## Known Weaknesses
 
 A man in the middle would be able to get the plaintext.
 
 Since two separate key exchanges are computed per-side,
 that costs more cpu than if it was only necessary to do one.
 
-## Default Settings
+## Cryptographic Primitives
 
 reference: [RFC3526 
 (sha256-42fcef9cabf127b9f1fc310489bc42401c0a4f74e8f804c3c3fac9818fe240ed)])(http://www.rfc-editor.org/rfc/rfc3526.txt)
@@ -72,6 +72,7 @@ private-stream's defaults follow the advice of the more conservative estimate.
 The conservative strength estimate for diffie-helman with modp15 is 130 bits.
 
 Since secure-scuttlebutt requires streaming realtime data,
+and salsa20 is straightforward to implement securely,
 I have decided to use salsa20 instead of aes.
 
 
