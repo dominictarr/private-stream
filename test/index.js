@@ -22,9 +22,9 @@ function endpoint (messages, cb) {
 }
 
 
-function tests(mod, aes) {
+//function tests(mod, aes) {
 
-  var private = require('../')(mod, aes) //use defaults.
+  var private = require('../') //use defaults.
 
 
   tape('encrypted duplex stream', function (t) {
@@ -84,11 +84,11 @@ function tests(mod, aes) {
 
   })
 
-}
+//}
 
-tests('modp1', 'aes-128-cbc')
-tests('modp2', 'aes-192-cbc')
-tests('modp5', 'aes-256-cbc')
-tests('modp14', 'aes-256-cbc')
-tests('modp15', 'aes-128-cbc')
+//tests('modp1', 'aes-128-cbc')
+//tests('modp2', 'aes-192-cbc')
+//tests('modp5', 'aes-256-cbc')
+//tests('modp14', 'aes-256-cbc')
+//tests('modp15', 'aes-128-cbc')
 

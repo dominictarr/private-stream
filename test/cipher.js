@@ -10,14 +10,15 @@ var readme = require('fs').readFileSync(__dirname+'/../README.md')
 tape('encrypt/decrypt', function (t) {
 
   var secret = crypto.createHash('sha256').update('whatever').digest()
-  var encrypt = cipher.encrypt(null, secret)
-  var decrypt = cipher.decrypt(null, secret)
+  var encrypt = cipher(null, secret)
+  var decrypt = cipher(null, secret)
 
   pull(
     pull.values(['hello there']),
+//    pull.map(Buffer),
     encrypt,
     decrypt,
-    pull.map(String),
+  //  pull.map(String),
     pull.collect(function (err, ary) {
       var str = ary.join('')
       t.equal(str, 'hello there')
@@ -30,11 +31,12 @@ tape('encrypt/decrypt', function (t) {
 tape('encrypt/decrypt, delayed', function (t) {
 
   var secret = crypto.createHash('sha256').update('whatever').digest()
-  var encrypt = cipher.encrypt()
-  var decrypt = cipher.decrypt(null, secret)
+  var encrypt = cipher()
+  var decrypt = cipher(null, secret)
 
   pull(
     pull.values(['hello there']),
+    pull.map(Buffer),
     encrypt,
     decrypt,
     pull.map(String),
@@ -48,11 +50,12 @@ tape('encrypt/decrypt, delayed', function (t) {
   encrypt.secret(secret)
 
 })
+
 tape('encrypt/decrypt, delayed', function (t) {
 
   var secret = crypto.createHash('sha256').update('whatever').digest()
-  var encrypt = cipher.encrypt(null, secret)
-  var decrypt = cipher.decrypt()
+  var encrypt = cipher(null, secret)
+  var decrypt = cipher()
 
   pull(
     pull.values(['hello there']),
@@ -73,8 +76,8 @@ tape('encrypt/decrypt, delayed', function (t) {
 tape('encrypt/decrypt, delayed', function (t) {
 
   var secret = crypto.createHash('sha256').update('whatever').digest()
-  var encrypt = cipher.encrypt()
-  var decrypt = cipher.decrypt()
+  var encrypt = cipher()
+  var decrypt = cipher()
 
   pull(
     pull.values(['hello there']),
@@ -96,8 +99,8 @@ tape('encrypt/decrypt, delayed', function (t) {
 tape('encrypt/decrypt, delayed', function (t) {
 
   var secret = crypto.createHash('sha256').update('whatever').digest()
-  var encrypt = cipher.encrypt()
-  var decrypt = cipher.decrypt()
+  var encrypt = cipher()
+  var decrypt = cipher()
 
   pull(
     pull.values(['hello there']),
@@ -120,8 +123,8 @@ for(var i = 0; i < 200; i++) (function (i) {
   tape('encrypt/decrypt - ' + i, function (t) {
 
     var secret = crypto.createHash('sha256').update('whatever' + i).digest()
-    var encrypt = cipher.encrypt()
-    var decrypt = cipher.decrypt()
+    var encrypt = cipher()
+    var decrypt = cipher()
     decrypt.secret(secret)
     encrypt.secret(secret)
 
@@ -148,8 +151,8 @@ for(var i = 0; i < 20; i++) (function (i) {
   tape('encrypt/decrypt readme file- ' + i, function (t) {
 
     var secret = crypto.createHash('sha256').update('whatever' + i).digest()
-    var encrypt = cipher.encrypt()
-    var decrypt = cipher.decrypt()
+    var encrypt = cipher()
+    var decrypt = cipher()
     decrypt.secret(secret)
     encrypt.secret(secret)
 
