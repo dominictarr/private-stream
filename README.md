@@ -5,6 +5,15 @@ Very simple encryption protocol for p2p systems.
 Add privacy to a duplex pull-stream, but not integrity checking, or identity.
 Intended for use in p2p systems such as [secure-scuttlebutt](https://github.com/ssbc)
 
+*** WARNING - implemented as exercise, do not use ***
+
+> This does not have authentication or authenticated encryption.
+> This protocol does not confirm the identity of the remote party,
+> so it's vunerable to man-in-the-middle attacks, and it does not
+> use an MAC/authenticated encryption so it's also vulnerable to attackers
+> who may flip bits in the ciphertext, unless the application layer
+> protocol is fully authenticated.
+
 There is no cipher-suite negotiation handshake.
 This is by design, as it's often a source of complexity and insecurity.
 p2p systems usually have a peer lookup system - perhaps a DHT or gossip protocol -
@@ -96,32 +105,29 @@ produce errors at the next layer.
 ## Protocol
 
 private-stream takes a key-exchange algorithm (diffie-helman with modp14)
-a stream cipher (salsa20 with initialization vector of first 8 bytes
-of blake2s('private-stream') = 99ec6b50601492d0),
-and a hash function (blake2s)
+a stream cipher (salsa20).
 
 The protocol is symmetrical, and each side performs the same
 operations in parallel. I'll call one side the "local" side,
 and one "remote", but the caller and the answerer are both of
 local and remote to each other.
 
-First the local side generates a key exchange, and sends it
-to the remote, who has also done the same, sending it to the
-local side. On receiving the remote's key exchange, they
-are combined to compute the secret.
+First the local side generates a key exchange and an nonce
+(their initialization vector), and sends it to the remote.
+who has also done the same, sending it to the local side.
+On receiving the remote's key exchange, they are combined
+to compute the secret.
 
-Stream cipher keys should not be reused, so we need two
-symmetric keys. To derive two key, we concatenate the secret
-with the public keys and hash them.
+Stream cipher keys, initialization vectors must not be reused.
+Each side initializes two stream ciphers, one for encrypting
+their data to the remote, and one for decrypting data the remote
+has sent to them.
 
-The local encryption key is `hash(local's exchange + secret)`
-and the local decryption key is `hash(remote's exchange + secret)`.
-This is symmetrical, so the local encryption key is the same
-as the remote decryption key.
-
-This uses two hashes, and one key exchange, which, for the
-default settings, is cheaper than two key exchanges, allowing
-a more secure (expensive) key exchange.
+The local nonce is used for the encrypting cipher,
+and the remote nonce is used to decrypt. Since the
+remote is the mirror image of the local, it means
+that the remote's decryption cipher is the same as
+the local's encryption cipher and vice versa.
 
 ## Known Weaknesses
 
@@ -130,6 +136,8 @@ a more secure (expensive) key exchange.
 * If either party had a random number generator that could be predicted
   by a third party, that party could access the plain text.
   (but if this is true they can probably guess their private key too)
+
+* Authenticated encryption is not used, so an attacker that can flip random bits can corrupt the plaintext.
 
 ## Cryptographic Primitives
 
@@ -146,8 +154,6 @@ The conservative strength estimate for diffie-helman with modp15 is 130 bits.
 Since secure-scuttlebutt requires streaming realtime data,
 and salsa20 is straightforward to implement securely,
 I have decided to use salsa20 instead of aes.
-
-Blake2s was chosen because it is the [fastest hash available implemented in javascript](http://dominictarr.github.io/crypto-bench/).
 
 ## License
 
